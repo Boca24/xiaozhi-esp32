@@ -83,9 +83,8 @@ fork分支自https://github.com/78/xiaozhi-esp32
 👉 [后台操作视频教程（旧版界面）](https://www.bilibili.com/video/BV1jUCUY2EKM/)
 
 # 硬件购买
-![开源音箱](docs/开源音箱.jpg)
-![开源音箱链接](docs/开源音箱链接.jpg)
-![开源模组链接](docs/开源模组链接.jpg)
+![开源音箱链接](docs/开源音箱链接.png)
+![开源模组链接](docs/开源模组链接.png)
 
 
 ## Star History
