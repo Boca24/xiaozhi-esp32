@@ -49,7 +49,8 @@
 
 # 开发环境 
 ## 固件部分
-fork分支自https://github.com/78/xiaozhi-esp32，同步更新
+fork分支自https://github.com/78/xiaozhi-esp32
+同步更新
 
 - Cursor 或 VSCode
 - 安装 ESP-IDF 插件，选择 SDK 版本 5.3 或以上
@@ -64,7 +65,7 @@ fork分支自https://github.com/78/xiaozhi-esp32，同步更新
 ![编译](docs/log编译完成.png)
 
 运行
-![设备控制台](docs/运行.png)
+![设备控制台](docs/log运行.png)
 
 
 # 开机即用
@@ -77,8 +78,15 @@ fork分支自https://github.com/78/xiaozhi-esp32，同步更新
 ## 智能体配置
 
 如果你已经拥有一个小智 AI 聊天机器人设备，可以登录 [xiaozhi.me](https://xiaozhi.me) 控制台进行配置。
+![设备控制台](docs/设备控制台.png)
 
 👉 [后台操作视频教程（旧版界面）](https://www.bilibili.com/video/BV1jUCUY2EKM/)
+
+# 硬件购买
+![开源音箱](docs/开源音箱.jpg)
+![开源音箱链接](docs/开源音箱链接.jpg)
+![开源模组链接](docs/开源模组链接.jpg)
+
 
 ## Star History
 
