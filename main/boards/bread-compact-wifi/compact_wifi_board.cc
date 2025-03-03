@@ -16,7 +16,18 @@
 
 // LV_FONT_DECLARE(font_puhui_14_1);
 // LV_FONT_DECLARE(font_awesome_14_1);
+static void init_spk_en_init()
+{
+    gpio_reset_pin(AUDIO_I2S_SPK_GPIO_EN);
+    /* Set the GPIO as a push/pull output */
+    gpio_set_direction(AUDIO_I2S_SPK_GPIO_EN, GPIO_MODE_OUTPUT);
 
+    // 增加延迟，等待MAX98357上电稳定
+    vTaskDelay(pdMS_TO_TICKS(50));
+
+    // 配置功放使能引脚
+    gpio_set_level(AUDIO_I2S_SPK_GPIO_EN, 1);
+}
 class CompactWifiBoard : public WifiBoard
 {
 private:
@@ -104,6 +115,7 @@ public:
         // InitializeDisplayI2c();
         InitializeButtons();
         InitializeIot();
+        init_spk_en_init();
     }
 
     virtual Led *
