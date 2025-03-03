@@ -29,8 +29,8 @@
 
 #endif
 
-#define BOOT_BUTTON_GPIO GPIO_NUM_0     // 开关机
-#define FUNCTION_BUTTON_GPIO GPIO_NUM_5 // 自定义功能按键
+#define BOOT_BUTTON_GPIO GPIO_NUM_0  // 开关机
+#define TOUCH_BUTTON_GPIO GPIO_NUM_5 // 自定义功能按键
 
 #define BUILTIN_LED_GPIO GPIO_NUM_48
 // #define VOLUME_UP_BUTTON_GPIO GPIO_NUM_40
