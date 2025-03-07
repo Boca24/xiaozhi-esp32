@@ -43,6 +43,10 @@
 
 ### 文档
 
+零代码无编程使用教程：
+https://docs.qq.com/doc/DUUtMdEtTUmJKR0tL
+
+
 详见飞书文档教程：
 
 👉 [《小智 AI 聊天机器人百科全书》](https://ccnphfhqs21z.feishu.cn/wiki/F5krwD16viZoF0kKkvDcrZNYnhb?from=from_copylink)
