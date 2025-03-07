@@ -61,10 +61,24 @@ fork分支自https://github.com/78/xiaozhi-esp32
 通过Type-C USB 可以查看
 
 ## 编译和下载
-编译
+### 编译
 ![编译](docs/log编译完成.png)
 
-运行
+### 固件下载
+在项目根目录下的release目录下有编译好的固件文件。
+
+### 烧录
+命令行烧录：
+/Users/wish/.espressif/python_env/idf5.3_py3.12_env/bin/python /Users/wish/esp/v5.3/esp-idf/components/esptool_py/esptool/esptool.py -p /dev/tty.usbmodem14301 -b 460800 --before default_reset --after hard_reset --chip esp32s3 write_flash --flash_mode dio --flash_freq 80m --flash_size 8MB 0x0 bootloader/bootloader.bin 0x100000 xiaozhi.bin 0x8000 partition_table/partition-table.bin 0xd000 ota_data_initial.bin 0x10000 srmodels/srmodels.bin 
+
+IDF工具烧录可以参考命令行烧录的文件和烧录地址：
+0x0 bootloader/bootloader.bin 
+0x8000 partition_table/partition-table.bin 
+0xd000 ota_data_initial.bin 
+0x10000 srmodels/srmodels.bin
+0x100000 xiaozhi.bin 
+
+### 运行
 ![设备控制台](docs/log运行.png)
 
 
