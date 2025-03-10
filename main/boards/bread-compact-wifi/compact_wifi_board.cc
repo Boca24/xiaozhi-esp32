@@ -1,16 +1,20 @@
 #include "wifi_board.h"
 #include "audio_codecs/no_audio_codec.h"
-#include "display/no_display.h"
+#include "display/display.h"
 #include "system_reset.h"
 #include "application.h"
 #include "button.h"
 #include "config.h"
 #include "iot/thing_manager.h"
 #include "led/single_led.h"
+#include "assets/lang_config.h"
 
 #include <wifi_station.h>
 #include <esp_log.h>
 #include <driver/i2c_master.h>
+#include "application.h"
+#include "board.h"
+#include <esp_sleep.h>           // 睡眠
 
 #define TAG "CompactWifiBoard"
 
@@ -22,12 +26,46 @@ static void init_spk_en_init()
     /* Set the GPIO as a push/pull output */
     gpio_set_direction(AUDIO_I2S_SPK_GPIO_EN, GPIO_MODE_OUTPUT);
 
-    // 增加延迟，等待MAX98357上电稳定
+    // 增加延迟，等待MAX98357上电稳定，避免上电破音
     vTaskDelay(pdMS_TO_TICKS(50));
 
     // 配置功放使能引脚
     gpio_set_level(AUDIO_I2S_SPK_GPIO_EN, 1);
 }
+
+static void prepear_and_sleep()
+{
+    // 关机提示音
+    auto &application = Application::GetInstance();
+    auto &board = Board::GetInstance();
+    application.SetDeviceState(kDeviceStateIdle);
+    board.GetAudioCodec()->EnableOutput(true);
+    application.Alert(Lang::Strings::ERROR, Lang::Strings::PIN_ERROR, "sad", Lang::Sounds::P3_ERR_PIN);
+
+    // 等候语音播放完成
+    // 这里添加等待语音播放完成的逻辑，可能涉及检查音频播放状态等操作
+    xTaskCreate([](void *ctx)
+    {
+        ESP_LOGI(TAG, "Sleeping in 3 seconds");
+        vTaskDelay(pdMS_TO_TICKS(3000));
+
+            ESP_LOGW(TAG, "启动电源按钮开机...");
+            esp_err_t err = esp_sleep_enable_ext0_wakeup((gpio_num_t)BOOT_BUTTON_GPIO, 0);
+            if (err != ESP_OK) {
+                ESP_LOGE(TAG, "Failed to enable BOOT_BUTTON_GPIO as wakeup source: %s", esp_err_to_name(err));
+                return;
+            }
+
+        ESP_LOGW(TAG, "系统进入睡眠");
+        esp_deep_sleep_start();
+    }, "sleep_task", 4096, NULL, 5, NULL);
+
+    while (1)
+    {
+        vTaskDelay(pdMS_TO_TICKS(3000));
+    }
+}
+
 class CompactWifiBoard : public WifiBoard
 {
 private:
@@ -62,6 +100,12 @@ private:
                 ResetWifiConfiguration();
             }
             app.ToggleChatState(); });
+
+            boot_button_.OnLongPress([this]()
+            {
+                ESP_LOGI(TAG, "Boot Button LongPress");
+                prepear_and_sleep();
+                });
         touch_button_.OnPressDown([this]()
                                   { Application::GetInstance().StartListening(); });
         touch_button_.OnPressUp([this]()
