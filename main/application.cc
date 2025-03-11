@@ -348,6 +348,8 @@ void Application::Start() {
         return higher_priority_task_woken == pdTRUE;
     });
     codec->Start();
+    Alert(Lang::Strings::BOOT, Lang::Strings::BOOT, "", Lang::Sounds::P3_BOOT);
+
 
     /* Start the main loop */
     xTaskCreate([](void* arg) {

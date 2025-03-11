@@ -32,6 +32,14 @@ static void init_spk_en_init()
     // 配置功放使能引脚
     gpio_set_level(AUDIO_I2S_SPK_GPIO_EN, 1);
 }
+static void init_simple_led()
+{
+    gpio_reset_pin(SIMPLE_LED_GPIO);
+    /* Set the GPIO as a push/pull output */
+    gpio_set_direction(SIMPLE_LED_GPIO, GPIO_MODE_OUTPUT);
+    // 配置功放使能引脚
+    gpio_set_level(SIMPLE_LED_GPIO, 1);
+}
 
 static void prepear_and_sleep()
 {
@@ -39,8 +47,10 @@ static void prepear_and_sleep()
     auto &application = Application::GetInstance();
     auto &board = Board::GetInstance();
     application.SetDeviceState(kDeviceStateIdle);
+    application.ResetDecoder(); // 清除当前的音频缓冲区
     board.GetAudioCodec()->EnableOutput(true);
-    application.Alert(Lang::Strings::ERROR, Lang::Strings::PIN_ERROR, "sad", Lang::Sounds::P3_ERR_PIN);
+
+    application.Alert(Lang::Strings::SHUTDOWN, Lang::Strings::SHUTDOWN, "", Lang::Sounds::P3_SHUTDOWN);
 
     // 等候语音播放完成
     // 这里添加等待语音播放完成的逻辑，可能涉及检查音频播放状态等操作
@@ -159,6 +169,7 @@ public:
         // InitializeDisplayI2c();
         InitializeButtons();
         InitializeIot();
+        init_simple_led();
         init_spk_en_init();
     }
 

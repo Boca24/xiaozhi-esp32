@@ -70,6 +70,7 @@ public:
     void WakeWordInvoke(const std::string& wake_word);
     void PlaySound(const std::string_view& sound);
     bool CanEnterSleepMode();
+    void ResetDecoder();
 
 private:
     Application();
@@ -109,7 +110,6 @@ private:
     void MainLoop();
     void InputAudio();
     void OutputAudio();
-    void ResetDecoder();
     void SetDecodeSampleRate(int sample_rate);
     void CheckNewVersion();
     void ShowActivationCode();
