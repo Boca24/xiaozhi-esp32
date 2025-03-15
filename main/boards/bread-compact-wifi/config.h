@@ -29,7 +29,7 @@
 
 #endif
 
-#define BOOT_BUTTON_GPIO GPIO_NUM_0  // 开关机
+#define BOOT_BUTTON_GPIO GPIO_NUM_1  // 绿板为0；紫板为1
 #define TOUCH_BUTTON_GPIO GPIO_NUM_5 // 自定义功能按键
 
 #define SIMPLE_LED_GPIO GPIO_NUM_8
