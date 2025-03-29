@@ -29,7 +29,8 @@
 #define AUDIO_INPUT_READY_EVENT (1 << 1)
 #define AUDIO_OUTPUT_READY_EVENT (1 << 2)
 
-enum DeviceState {
+enum DeviceState
+{
     kDeviceStateUnknown,
     kDeviceStateStarting,
     kDeviceStateWifiConfiguring,
@@ -44,22 +45,24 @@ enum DeviceState {
 
 #define OPUS_FRAME_DURATION_MS 60
 
-class Application {
+class Application
+{
 public:
-    static Application& GetInstance() {
+    static Application &GetInstance()
+    {
         static Application instance;
         return instance;
     }
     // 删除拷贝构造函数和赋值运算符
-    Application(const Application&) = delete;
-    Application& operator=(const Application&) = delete;
+    Application(const Application &) = delete;
+    Application &operator=(const Application &) = delete;
 
     void Start();
     DeviceState GetDeviceState() const { return device_state_; }
     bool IsVoiceDetected() const { return voice_detected_; }
     void Schedule(std::function<void()> callback);
     void SetDeviceState(DeviceState state);
-    void Alert(const char* status, const char* message, const char* emotion = "", const std::string_view& sound = "");
+    void Alert(const char *status, const char *message, const char *emotion = "", const std::string_view &sound = "");
     void DismissAlert();
     void AbortSpeaking(AbortReason reason);
     void ToggleChatState();
@@ -67,8 +70,8 @@ public:
     void StopListening();
     void UpdateIotStates();
     void Reboot();
-    void WakeWordInvoke(const std::string& wake_word);
-    void PlaySound(const std::string_view& sound);
+    void WakeWordInvoke(const std::string &wake_word);
+    void PlaySound(const std::string_view &sound);
     bool CanEnterSleepMode();
     void ResetDecoder();
 
@@ -95,7 +98,7 @@ private:
     int clock_ticks_ = 0;
 
     // Audio encode / decode
-    BackgroundTask* background_task_ = nullptr;
+    BackgroundTask *background_task_ = nullptr;
     std::chrono::steady_clock::time_point last_output_time_;
     std::list<std::vector<uint8_t>> audio_decode_queue_;
 

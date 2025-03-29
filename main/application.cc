@@ -89,10 +89,10 @@ void Application::CheckNewVersion()
             continue;
         }
         retry_count = 0;
-        continue; // 禁止平台自动升级，以防意外被升级
 
         if (ota_.HasNewVersion())
         {
+            return; // 禁止平台自动升级，以防意外被升级
             Alert(Lang::Strings::OTA_UPGRADE, Lang::Strings::UPGRADING, "happy", Lang::Sounds::P3_UPGRADE);
             // Wait for the chat state to be idle
             do
@@ -387,6 +387,7 @@ void Application::Start()
         xEventGroupSetBitsFromISR(event_group_, AUDIO_OUTPUT_READY_EVENT, &higher_priority_task_woken);
         return higher_priority_task_woken == pdTRUE; });
     codec->Start();
+
     Alert(Lang::Strings::BOOT, Lang::Strings::BOOT, "", Lang::Sounds::P3_BOOT);
 
     /* Start the main loop */
@@ -394,7 +395,7 @@ void Application::Start()
                 {
         Application* app = (Application*)arg;
         app->MainLoop();
-        vTaskDelete(NULL); }, "main_loop", 4096 * 2, this, 3, nullptr);
+        vTaskDelete(NULL); }, "main_loop", 4096 * 2, this, 4, nullptr);
 
     /* Wait for the network to be ready */
     board.StartNetwork();
@@ -520,14 +521,10 @@ void Application::Start()
                                                            { opus_encoder_->Encode(std::move(data), [this](std::vector<uint8_t> &&opus)
                                                                                    { Schedule([this, opus = std::move(opus)]()
                                                                                               { protocol_->SendAudio(opus); }); }); }); });
-#endif
-
-#if CONFIG_USE_WAKE_WORD_DETECT
-    wake_word_detect_.Initialize(codec->input_channels(), codec->input_reference());
-    wake_word_detect_.OnVadStateChange([this](bool speaking)
-                                       { Schedule([this, speaking]()
-                                                  {
-            if (device_state_ == kDeviceStateListening) {
+    audio_processor_.OnVadStateChange([this](bool speaking)
+                                      {
+        if (device_state_ == kDeviceStateListening) {
+            Schedule([this, speaking]() {
                 if (speaking) {
                     voice_detected_ = true;
                 } else {
@@ -535,8 +532,12 @@ void Application::Start()
                 }
                 auto led = Board::GetInstance().GetLed();
                 led->OnStateChanged();
-            } }); });
+            });
+        } });
+#endif
 
+#if CONFIG_USE_WAKE_WORD_DETECT
+    wake_word_detect_.Initialize(codec->input_channels(), codec->input_reference());
     wake_word_detect_.OnWakeWordDetected([this](const std::string &wake_word)
                                          { Schedule([this, &wake_word]()
                                                     {
@@ -563,10 +564,7 @@ void Application::Start()
                 AbortSpeaking(kAbortReasonWakeWordDetected);
             } else if (device_state_ == kDeviceStateActivating) {
                 SetDeviceState(kDeviceStateIdle);
-            }
-
-            // Resume detection
-            wake_word_detect_.StartDetection(); }); });
+            } }); });
     wake_word_detect_.StartDetection();
 #endif
 
@@ -802,6 +800,9 @@ void Application::SetDeviceState(DeviceState state)
 #if CONFIG_USE_AUDIO_PROCESSOR
         audio_processor_.Stop();
 #endif
+#if CONFIG_USE_WAKE_WORD_DETECT
+        wake_word_detect_.StartDetection();
+#endif
         break;
     case kDeviceStateConnecting:
         display->SetStatus(Lang::Strings::CONNECTING);
@@ -816,6 +817,9 @@ void Application::SetDeviceState(DeviceState state)
 #if CONFIG_USE_AUDIO_PROCESSOR
         audio_processor_.Start();
 #endif
+#if CONFIG_USE_WAKE_WORD_DETECT
+        wake_word_detect_.StopDetection();
+#endif
         UpdateIotStates();
         if (previous_state == kDeviceStateSpeaking)
         {
@@ -829,6 +833,9 @@ void Application::SetDeviceState(DeviceState state)
         codec->EnableOutput(true);
 #if CONFIG_USE_AUDIO_PROCESSOR
         audio_processor_.Stop();
+#endif
+#if CONFIG_USE_WAKE_WORD_DETECT
+        wake_word_detect_.StartDetection();
 #endif
         break;
     default:
