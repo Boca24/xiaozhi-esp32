@@ -1,4 +1,4 @@
-# 纯聊天无屏幕版 音箱小智AI 聊天机器人 （XiaoZhi AI Chatbot）
+# 未无科技-小方音箱小智AI 聊天机器人 （XiaoZhi AI Chatbot）
 
 （中文 | [English](README_en.md) | [日本語](README_ja.md)）
 
