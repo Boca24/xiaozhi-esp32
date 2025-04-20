@@ -1,9 +1,0 @@
-{
-    "target": "esp32s3",
-    "builds": [
-        {
-            "name": "weiwu-x1-lcd-wifi",
-            "sdkconfig_append": []
-        }
-    ]
-}

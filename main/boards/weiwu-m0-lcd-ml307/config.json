@@ -1,9 +1,0 @@
-{
-    "target": "esp32s3",
-    "builds": [
-        {
-            "name": "weiwu-m0-lcd-ml307",
-            "sdkconfig_append": []
-        }
-    ]
-}
